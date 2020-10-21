@@ -1,0 +1,35 @@
+songs = open(r"C:\Users\Cornucopia\PycharmProjects\LyricsToneSci\Lyrics\X.txt", "r", encoding="utf8").read()
+#info_file = open("Documents/random/randoms/WebScraping/real/X_info.txt", "a")
+song_list = songs.split("#####")
+song_list.pop(0)
+title_list = [list(filter((str("")).__ne__, song.split("\n")))[:2] for song in song_list]
+for title in title_list:
+    title_string = 'artist:' + title[1] + '&track:' + title[0]
+    print(title_string)
+    result = sp.search(q=title_string, type='track')
+    print(result)
+
+
+
+
+
+
+
+birdy_uri = 'spotify:artist:2WX2uTcsvV5OnS0inACecP'
+
+
+
+results = sp.artist_albums(birdy_uri, album_type='album')
+albums = results['items']
+while results['next']:
+    results = sp.next(results)
+    albums.extend(results['items'])
+for album in albums:
+    results = sp.album_tracks(album['uri'])
+    tracks = results['items']
+    while results['next']:
+        results = sp.next(results)
+        tracks.extend(results['items'])
+
+for track in tracks:
+    print(track['name'])

@@ -3,13 +3,10 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import PATH_TO_LYRICS as PATH
 
-import unidecode
-import time
-
 auth_manager = SpotifyClientCredentials("1e42620b2b034f63bd21a1ff5b8526c1", "c587be0ae31d44f387f80d40aec3d3a7")
 sp = spotipy.Spotify(auth_manager=auth_manager)
 
-songs = open(PATH.LYRICS_FOLDER_PATH + "X.txt", "r", encoding="utf8").read()
+songs = open(PATH.LYRICS_FOLDER_PATH + "B.txt", "r", encoding="utf8").read()
 song_list = songs.split("#####\n")
 song_list.pop(0)
 song_title_list = []
@@ -77,7 +74,8 @@ print(len(artist_id_dict))
 print(len(artist_dict))
 
 
-artists_found = open('x_found.txt', 'a')
+artists_found = open('found.txt', 'a')
+artists_found.write("#####\n")
 for key, val in artist_id_dict.items():
     artists_found.write(key + "," + val + "\n")
 artists_found.close()
@@ -89,6 +87,7 @@ for key, val in artist_dict.items():
 
 
 artists_not_found = open('not_found.txt', 'a')
+artists_not_found.write("#####\n")
 for key, val in artist_dict_not_found.items():
-    artists_not_found.write(str(key) + ":" + str(val) + "\n")
+    artists_not_found.write(str(key) + ":::::" + str(val) + "\n")
 artists_not_found.close()

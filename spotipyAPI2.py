@@ -2,11 +2,13 @@ import re
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import PATH_TO_LYRICS as PATH
+import sqlite3
+import time
 
 auth_manager = SpotifyClientCredentials("1e42620b2b034f63bd21a1ff5b8526c1", "c587be0ae31d44f387f80d40aec3d3a7")
 sp = spotipy.Spotify(auth_manager=auth_manager)
 
-songs = open(PATH.LYRICS_FOLDER_PATH + "B.txt", "r", encoding="utf8").read()
+songs = open(PATH.LYRICS_FOLDER_PATH + "X.txt", "r", encoding="utf8").read()
 song_list = songs.split("#####\n")
 song_list.pop(0)
 song_title_list = []
@@ -42,7 +44,7 @@ for name, songs in artist_dict.items():
             found += 1
             print(name)
             print(found, not_found)
-            artist_id_dict[name] = item['uri']
+            artist_id_dict[name] = [item['uri'], songs]
             artist_found = True
             break
     if not artist_found:
@@ -60,7 +62,7 @@ for name, songs in artist_dict.items():
                     found += 1
                     print(track_artist)
                     print(found, not_found)
-                    artist_id_dict[name] = item['artists'][0]['uri']
+                    artist_id_dict[name] = [item['artists'][0]['uri'], songs]
                     artist_found = True
                     break
             if artist_found:
@@ -73,12 +75,29 @@ for name, songs in artist_dict.items():
 print(len(artist_id_dict))
 print(len(artist_dict))
 
-
-artists_found = open('found.txt', 'a')
+conn = sqlite3.connect('songs.db')
+c = conn.cursor()
+for artist, values in artist_id_dict.items():
+    try:
+        c.execute('''INSERT INTO artists (name, tune_bat_id, date_added) VALUES(?,?,?);''', (artist, values[0], time.time()))
+        conn.commit()
+    except:
+        pass
+    print(time.time())
+    for song in values[1]:
+        artist_id = c.execute('''SELECT id FROM artists WHERE name = ?;''', (artist,)).fetchone()[0]
+        c.execute('''INSERT INTO  songs (artist_id, song, lyrics, date_added) VALUES(?,?,?,?);''', (str(artist_id), song[0], song[1], time.time()))
+        conn.commit()
+conn.close()
+    #artists_found.write(str(key) + ":" + str(val) + "\n")
+'''artists_found = open('found.txt', 'a')
 artists_found.write("#####\n")
 for key, val in artist_id_dict.items():
-    artists_found.write(key + "," + val + "\n")
-artists_found.close()
+    for 
+    artists_found.write(str(key) + ":" + str(val) + "\n")
+artists_found.close()'''
+
+
 
 artist_dict_not_found = {}
 for key, val in artist_dict.items():
@@ -89,5 +108,5 @@ for key, val in artist_dict.items():
 artists_not_found = open('not_found.txt', 'a')
 artists_not_found.write("#####\n")
 for key, val in artist_dict_not_found.items():
-    artists_not_found.write(str(key) + ":::::" + str(val) + "\n")
+    artists_not_found.write(str(key) + ":" + str(val) + "\n")
 artists_not_found.close()

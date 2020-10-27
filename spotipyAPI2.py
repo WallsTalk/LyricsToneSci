@@ -78,15 +78,13 @@ print(len(artist_dict))
 conn = sqlite3.connect('songs.db')
 c = conn.cursor()
 for artist, values in artist_id_dict.items():
-    try:
+    if c.execute('''SELECT id FROM artists WHERE name = ?;''', (artist,)).fetchone() is None:
         c.execute('''INSERT INTO artists (name, tune_bat_id, date_added) VALUES(?,?,?);''', (artist, values[0], time.time()))
         conn.commit()
-    except:
-        pass
     print(time.time())
+    artist_id = c.execute('''SELECT id FROM artists WHERE name = ?;''', (artist,)).fetchone()[0]
     for song in values[1]:
-        artist_id = c.execute('''SELECT id FROM artists WHERE name = ?;''', (artist,)).fetchone()[0]
-        c.execute('''INSERT INTO  songs (artist_id, song, lyrics, date_added) VALUES(?,?,?,?);''', (str(artist_id), song[0], song[1], time.time()))
+        c.execute('''INSERT INTO  songs (song, artist_id, lyrics, date_added) VALUES(?,?,?,?);''', (song[0], artist_id, song[1], time.time()))
         conn.commit()
 conn.close()
     #artists_found.write(str(key) + ":" + str(val) + "\n")

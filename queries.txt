@@ -7,13 +7,12 @@ c = conn.cursor()
 
 
 #create table
-c.execute('''CREATE TABLE songs (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, artist VARCHAR, song VARCHAR, lyrics TEXT, date_added INTEGER);''')
-c.execute('''CREATE TABLE artists (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, name VARCHAR, tune_bat_id VARCHAR UNIQUE, date_added INTEGER);
-''')
+c.execute('''CREATE TABLE songs (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, song VARCHAR, artist_id VARCHAR, lyrics TEXT, date_added INTEGER);''')
+c.execute('''CREATE TABLE artists (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, name VARCHAR, tune_bat_id VARCHAR UNIQUE, date_added INTEGER);''')
 conn.commit()
 
 # insert rows
-c.execute('''INSERT INTO  songs (artist, song, lyrics, date_added) VALUES(?,?,?,?);''', (artist, song, lyrics, date_added))
+c.execute('''INSERT INTO  songs (song, artist_id, lyrics, date_added) VALUES(?,?,?,?);''', (song, artist_id, lyrics, date_added))
 c.execute('''INSERT INTO artists  (name, tune_bat_id, date_added) VALUES(?,?,?);''', (name, tune_bat_id, date_added))
 
 conn.commit()
